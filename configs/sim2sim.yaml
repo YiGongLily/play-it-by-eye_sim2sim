@@ -1,0 +1,53 @@
+# X2 Depth CNN MuJoCo sim2sim（Phase-0 平地）
+# 策略契约复用 deploy_real depth_cnn pack（v0 / 2026-07-31_09-46-03）
+
+# Sibling checkout: ../deploy_real (relative to this repo root)
+deploy_config: ../deploy_real/configs/x2/depth_cnn_real.yaml
+scene_xml: assets/scene_flat.xml
+
+sim:
+  timestep: 0.005
+  decimation: 4          # policy 50 Hz
+  duration_s: 0.0        # 0 = 无限（关 viewer 退出）
+
+depth:
+  camera_name: rgbd_head_front
+  render_height: 40
+  render_width: 64
+  backend: raycast       # raycast: safe with viser; egl: OpenGL depth buffer
+  # 与 training / deploy 一致；由 alignment 覆盖 height/width/d_max
+  clip_near: 0.2
+  clip_far: 6.0
+  # If far-fill ≥ this, reuse last good depth (breaks pitch-up → all-red spiral).
+  hold_on_far_frac: 0.50
+  # group 0=terrain, 1=visual body (Isaac-like arms/legs/torso in depth).
+  # exclude_robot=true → only group 0; false → terrain + visual (default groups below).
+  exclude_robot: false
+  terrain_geom_group: 0
+  robot_visual_group: 1
+  # Optional explicit list overrides the two flags, e.g. [0, 1, 3] to also hit collision.
+  # ray_geom_groups: [0, 1]
+
+viewer:
+  enable: true
+  backend: viser          # browser via mjviser; no local GLFW GUI
+  host: "0.0.0.0"
+  port: 8080
+  show_depth: true
+  show_fov: true
+  fov_length: 1.2        # visualization only (not sensor clip_far=6)
+  fov_near: 0.05
+  track_pelvis: true
+  sync_realtime: true
+
+# Velocity panel limits (= Rough-CNN v0 / Phase-1 train command ranges)
+#   train: lin_vel_x (0.4, 1.2), lin_vel_y (-0.5, 0.5), ang_vel_z (-2.0, 2.0)
+#   panel uses ±limit; vx max 1.2 covers train forward range (reverse rarely trained)
+keyboard:
+  enable: true
+  vx_mag: 0.05
+  wz_mag: 0.05
+  vy_mag: 0.05
+  vx_limit: 1.2
+  vy_limit: 0.5
+  wz_limit: 2.0

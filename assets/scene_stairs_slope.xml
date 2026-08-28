@@ -1,0 +1,81 @@
+<!-- Three parallel corridors (Y lanes): Easy @ y=0, Medium @ y=5, Hard @ y=10.
+     Each: flat approach → stairs up → platform → slope down → flat.
+     Switch difficulty in viser by teleporting to the lane spawn (x=0, y=lane).
+
+     Easy:   4 × 0.08 m, slope 0.20
+     Medium: 5 × 0.12 m, slope 0.25
+     Hard:   5 × 0.20 m, slope 0.38
+     step_width = 0.30 m (Isaac DEPTH_MIX), corridor half-width = 1.0 m
+-->
+<mujoco model="x2_depth_sim2sim_stairs_slope">
+  <include file="x2_with_camera.xml"/>
+
+  <statistic center="2.5 5 0.6" extent="8.0"/>
+
+  <visual>
+    <headlight diffuse="0.5 0.5 0.5" ambient="0.2 0.2 0.2" specular="0.9 0.9 0.9"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="150" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+             rgb1="0.3 0.52 0.63" rgb2="0.25 0.45 0.55" markrgb="1 1 1" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+    <material name="mat_stair_e" rgba="0.85 0.55 0.25 1" reflectance="0.1"/>
+    <material name="mat_plat_e" rgba="0.75 0.70 0.45 1" reflectance="0.1"/>
+    <material name="mat_slope_e" rgba="0.35 0.70 0.55 1" reflectance="0.1"/>
+    <material name="mat_stair_m" rgba="0.90 0.40 0.25 1" reflectance="0.1"/>
+    <material name="mat_plat_m" rgba="0.80 0.55 0.35 1" reflectance="0.1"/>
+    <material name="mat_slope_m" rgba="0.30 0.60 0.75 1" reflectance="0.1"/>
+    <material name="mat_stair_h" rgba="0.85 0.25 0.25 1" reflectance="0.1"/>
+    <material name="mat_plat_h" rgba="0.70 0.35 0.30 1" reflectance="0.1"/>
+    <material name="mat_slope_h" rgba="0.45 0.35 0.70 1" reflectance="0.1"/>
+  </asset>
+
+  <default>
+    <default class="terrain_box">
+      <geom type="box" contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001"/>
+    </default>
+  </default>
+
+  <worldbody>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- ========== Easy @ y=0: 4×0.08, top=0.32, slope=0.20, run=1.6 ========== -->
+    <body name="lane_easy" pos="0 0 0">
+      <geom name="e_stair_1" class="terrain_box" material="mat_stair_e" size="0.15 1.0 0.04" pos="1.15 0 0.04"/>
+      <geom name="e_stair_2" class="terrain_box" material="mat_stair_e" size="0.15 1.0 0.08" pos="1.45 0 0.08"/>
+      <geom name="e_stair_3" class="terrain_box" material="mat_stair_e" size="0.15 1.0 0.12" pos="1.75 0 0.12"/>
+      <geom name="e_stair_4" class="terrain_box" material="mat_stair_e" size="0.15 1.0 0.16" pos="2.05 0 0.16"/>
+      <geom name="e_platform" class="terrain_box" material="mat_plat_e" size="0.5 1.0 0.16" pos="2.70 0 0.16"/>
+      <geom name="e_slope" class="terrain_box" material="mat_slope_e"
+            size="0.8155 1.0 0.025" pos="4.00 0 0.16" euler="0 0.1974 0"/>
+    </body>
+
+    <!-- ========== Medium @ y=5: 5×0.12, top=0.60, slope=0.25, run=2.4 ========== -->
+    <body name="lane_medium" pos="0 5 0">
+      <geom name="m_stair_1" class="terrain_box" material="mat_stair_m" size="0.15 1.0 0.06" pos="1.15 0 0.06"/>
+      <geom name="m_stair_2" class="terrain_box" material="mat_stair_m" size="0.15 1.0 0.12" pos="1.45 0 0.12"/>
+      <geom name="m_stair_3" class="terrain_box" material="mat_stair_m" size="0.15 1.0 0.18" pos="1.75 0 0.18"/>
+      <geom name="m_stair_4" class="terrain_box" material="mat_stair_m" size="0.15 1.0 0.24" pos="2.05 0 0.24"/>
+      <geom name="m_stair_5" class="terrain_box" material="mat_stair_m" size="0.15 1.0 0.30" pos="2.35 0 0.30"/>
+      <geom name="m_platform" class="terrain_box" material="mat_plat_m" size="0.5 1.0 0.30" pos="3.00 0 0.30"/>
+      <geom name="m_slope" class="terrain_box" material="mat_slope_m"
+            size="1.2365 1.0 0.025" pos="4.70 0 0.30" euler="0 0.2450 0"/>
+    </body>
+
+    <!-- ========== Hard @ y=10: 5×0.20, top=1.00, slope=0.38, run≈2.63 ========== -->
+    <body name="lane_hard" pos="0 10 0">
+      <geom name="h_stair_1" class="terrain_box" material="mat_stair_h" size="0.15 1.0 0.10" pos="1.15 0 0.10"/>
+      <geom name="h_stair_2" class="terrain_box" material="mat_stair_h" size="0.15 1.0 0.20" pos="1.45 0 0.20"/>
+      <geom name="h_stair_3" class="terrain_box" material="mat_stair_h" size="0.15 1.0 0.30" pos="1.75 0 0.30"/>
+      <geom name="h_stair_4" class="terrain_box" material="mat_stair_h" size="0.15 1.0 0.40" pos="2.05 0 0.40"/>
+      <geom name="h_stair_5" class="terrain_box" material="mat_stair_h" size="0.15 1.0 0.50" pos="2.35 0 0.50"/>
+      <geom name="h_platform" class="terrain_box" material="mat_plat_h" size="0.5 1.0 0.50" pos="3.00 0 0.50"/>
+      <geom name="h_slope" class="terrain_box" material="mat_slope_h"
+            size="1.4075 1.0 0.025" pos="4.816 0 0.50" euler="0 0.3637 0"/>
+    </body>
+  </worldbody>
+</mujoco>

@@ -1,0 +1,46 @@
+# Virtual env / packaging
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local IDE / OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Runtime / debug artifacts
+artifacts/
+logs/
+videos/
+*.log
+*.bak
+
+# Model weights & media (keep out of git by default)
+*.onnx
+*.pt
+*.pth
+*.ckpt
+*.npz
+*.mp4
+*.avi
+*.gif

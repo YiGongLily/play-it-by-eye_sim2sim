@@ -1,0 +1,54 @@
+# Stairs + slope multi-difficulty (Easy / Medium / Hard parallel Y lanes)
+# Switch lane in viser panel "Terrain Difficulty" (teleport + policy reset).
+
+# Sibling checkout: ../deploy_real (relative to this repo root)
+deploy_config: ../deploy_real/configs/x2/depth_cnn_real.yaml
+scene_xml: assets/scene_stairs_slope.xml
+
+terrain:
+  multi_difficulty: true
+  default_difficulty: easy   # easy | medium | hard
+  spawn_z: 0.68
+
+sim:
+  timestep: 0.005
+  decimation: 4
+  duration_s: 0.0
+
+depth:
+  camera_name: rgbd_head_front
+  render_height: 40
+  render_width: 64
+  backend: raycast
+  clip_near: 0.2
+  clip_far: 6.0
+  # If far-fill ≥ this, reuse last good depth (breaks pitch-up → all-red spiral).
+  hold_on_far_frac: 0.50
+  # group 0=terrain, 1=visual body (see arms/legs like Isaac)
+  exclude_robot: false
+  terrain_geom_group: 0
+  robot_visual_group: 1
+
+viewer:
+  enable: true
+  backend: viser
+  host: "0.0.0.0"
+  port: 8080
+  show_depth: true
+  show_fov: true
+  fov_length: 1.2        # visualization only (not sensor clip_far=6)
+  fov_near: 0.05
+  track_pelvis: true
+  sync_realtime: true
+
+# Velocity panel limits (= Rough-CNN v0 / Phase-1 train command ranges)
+#   train: lin_vel_x (0.4, 1.2), lin_vel_y (-0.5, 0.5), ang_vel_z (-2.0, 2.0)
+# v1 corridor would use: vx_limit 1.2, vy_limit 0.0, wz_limit 0.8
+keyboard:
+  enable: true
+  vx_mag: 0.05
+  wz_mag: 0.05
+  vy_mag: 0.05
+  vx_limit: 1.2
+  vy_limit: 0.5
+  wz_limit: 2.0
